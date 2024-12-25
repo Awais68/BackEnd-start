@@ -65,7 +65,7 @@ router.post("/login", async (req, res) => {
 
 });
 
-// router.post("/login", (req, res) => {});
+
 // router.post("/reset-password", (req, res) => {});
 // router.post("/forget-password", (req, res) => {});
 

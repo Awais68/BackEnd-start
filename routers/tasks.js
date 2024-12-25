@@ -4,55 +4,28 @@ import Task from "../models/Task.js";
 import sendResponse from "../helpers/sendResponse.js";
 
 router.post("/", async (req, res) => {
-  const { task } = req.body;
-  let newTask = new Task({ task });
-  newTask = await newTask.save();
-
-  sendResponse(res, 201, newTask, false, "Task added Successfully");
+  try {
+    const { task } = req.body;
+    let newTask = new Task({ task });
+    newTask = await newTask.save();
+    sendResponse(res, 201, newTask, false, "Task added Successfully");
+  } catch (err) {
+    console.error("Error adding task:", err.message);
+    sendResponse(res, 500, null, true, "Internal Server Error");
+  }
 });
 
 router.get("/", async (req, res) => {
-  const task = await Task.find();
-  if (!task) return sendResponse(res, 404, null, true, "Task Not Found ");
-
-  sendResponse(res, 200, task, false, "Task Fetched Successfully");
+  try {
+    const tasks = await Task.find();
+    if (!tasks || tasks.length === 0) {
+      return sendResponse(res, 404, null, true, "Tasks Not Found");
+    }
+    sendResponse(res, 200, tasks, false, "Tasks retrieved successfully");
+  } catch (err) {
+    console.error("Error retrieving tasks:", err.message);
+    sendResponse(res, 500, null, true, "Internal Server Error");
+  }
 });
-
-// router.get("/", async (req, res) => {
-//   let newTask = new Task.find();
-//   newTask = await newTask.save();
-
-//   sendResponse(res, 200, newTask, false, "Task Fetched Successfully");
-// });
-// GET SINGLE ID FORM DB
-router.get("/:id", async (req, res) => {
-  const task = await Task.findById(req.params.id);
-  if (!task) return sendResponse(res, 404, null, true, "Task Not Found ");
-
-  sendResponse(res, 200, task, false, "Task Fetched Successfully");
-});
-
-// UPdated Data PUt Rquest 
-router.put("/:id", async (req, res) => {
-  const {task, completed } = req.body
-  const taskFromDB = await Task.findById(req.params.id);
-  if (!taskFromDB) return sendResponse(res, 404, null, true, "Task Not Found ");
-
-  if(task) taskFromDB.task = task;
-  if(completed) taskFromDB.completed = completed;
-  await taskFromDB.save();
-  sendResponse(res, 200, task, false, "Task Updated Successfully");
-});
-
-// DELETE REQUEST 
-router.put("/:id", async (req, res) => {
-  const {task, completed } = req.body
-  const taskFromDB = await Task.findById(req.params.id);
-  if (!taskFromDB) return sendResponse(res, 404, null, true, "Task Not Found ");
-
-  await Task.deleteOne({_id : req.params.id});
-  sendResponse(res, 200, null, false, "Task Deleted  Successfully");
-});
-
 
 export default router;
