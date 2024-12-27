@@ -4,13 +4,13 @@ const { Schema } = mongoose;
 
 const courseSchema = new Schema(
   {
-    course: String,
-    completed: { type: Boolean, default: "" },
+    title: String,
+    description: { type: String, default: "" },
     thumbnail: String,
   },
   { timestamps: true }
 );
 
-const course = mongoose.model("Course", courseSchema);
+const Course = mongoose.model("Course", courseSchema);
 
-export default course;
+export default Course;

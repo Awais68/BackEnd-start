@@ -16,22 +16,22 @@ const users = [
   },
 ];
 
-router.get("/",  authenticateUser, async (req, res) => {
+router.get("/", authenticateUser, async (req, res) => {
   try {
-    const user = req.user
+    const user = req.user;
     console.log("user>", user);
-  
-    const course = await Course.find();
-    if(course) sendResponse(res, 200, course, false, "Course Fetched Successfully ");
-    sendResponse (res, 400, null, true, "course not found"  )
-    
+
+    const Course = await Course.find();
+    if (Course)
+      sendResponse(res, 200, Course, false, "Course Fetched Successfully ");
+    sendResponse(res, 400, null, true, "course not found");
   } catch (error) {
     // sendResponse (res, 400, null, true, "inavalid"  )
   }
 });
 
 router.post("/", authenticateAdmin, async (req, res) => {
-  let course = new course(req.body);
+  var course = Course(req.body);
   course = await course.save();
   sendResponse(res, 200, course, false, "Course Added Successfully ");
 });
