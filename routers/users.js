@@ -36,8 +36,9 @@ router.get("/myInfo", authenticateUser, async (req, res) => {
       {
         _id: req.user._id,
       });
+      if(user) return sendResponse(res, 200, user, false, "User updated Successfully");
     
-    sendResponse(res, 200, user, false, "User updated Successfully");
+    sendResponse(res, 400, null, true, "User nothing");
   } catch (err) {
     
     sendResponse(res, 500, null, true, "Something went wrong");

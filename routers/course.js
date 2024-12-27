@@ -16,9 +16,18 @@ const users = [
   },
 ];
 
-router.get("/", authenticateUser, async (req, res) => {
-  const course = await Course.find();
-  sendResponse(res, 200, course, false, "Course Fetched Successfully ");
+router.get("/",  authenticateUser, async (req, res) => {
+  try {
+    const user = req.user
+    console.log("user>", user);
+  
+    const course = await Course.find();
+    if(course) sendResponse(res, 200, course, false, "Course Fetched Successfully ");
+    sendResponse (res, 400, null, true, "course not found"  )
+    
+  } catch (error) {
+    // sendResponse (res, 400, null, true, "inavalid"  )
+  }
 });
 
 router.post("/", authenticateAdmin, async (req, res) => {
