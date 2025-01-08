@@ -6,6 +6,7 @@ import {
   authenticateUser,
 } from "../middleware/authentication.js";
 
+
 const router = express.Router();
 
 const users = [
@@ -20,13 +21,11 @@ router.get("/", authenticateUser, async (req, res) => {
   try {
     const user = req.user;
     console.log("user>", user);
-
-    const Course = await Course.find();
-    if (Course)
-      sendResponse(res, 200, Course, false, "Course Fetched Successfully ");
-    sendResponse(res, 400, null, true, "course not found");
+    const course = await Course.find();
+    console.log("Course in backend>", course);
+    if (course) sendResponse(res, 200, course, false, "Course Fetched Successfully ");
   } catch (error) {
-    // sendResponse (res, 400, null, true, "inavalid"  )
+    sendResponse(res, 400, null, true, "course not found");
   }
 });
 

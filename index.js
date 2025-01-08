@@ -5,6 +5,7 @@ import mongoose, { connect } from "mongoose";
 import taskRoutes from "./routers/tasks.js";
 import authRoutes from "./routers/auth.js";
 import userRoutes from "./routers/users.js";
+import studentsRoutes from "./routers/students.js";
 import courseRoutes from "./routers/course.js";
 import { authenticateUser } from "./middleware/authentication.js";
 import cors from "cors";
@@ -34,5 +35,6 @@ app.use("/task", authenticateUser, taskRoutes);
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/course", courseRoutes);
+app.use("/student", studentsRoutes);
 
 app.listen(PORT, () => console.log("server is running on PORT " + PORT));
