@@ -1,48 +1,46 @@
 import express from "express";
 import sendResponse from "../helpers/sendResponse.js";
-
 import "dotenv/config";
-
-import { authenticateUser } from "../middleware/authentication.js";
-import User from "../models/User.js";
+import Students from "../models/Students.js";
 
 const router = express.Router();
 
-router.put("/", authenticateUser, async (req, res) => {
-  try {
-    const { city, country } = req.body;
-    const user = await User.findOneAndUpdate(
-      {
-        _id: req.user._id,
-      },
-      {
-        city,
-        country,
-      },
-      {new: true}
-    ).exec(true);
-    sendResponse(res, 200, user, false, "User updated Successfully");
-  } catch (err) {
-    console.error("Error:", err);
-    sendResponse(res, 500, null, true, "Something went wrong");
-  }
-});
+router.get("/", async (req, res) => {
+  const { course, aboveAge, city } = req.query;
+  const query = {};
 
+  if (course && course !== "all") query.course = course.toString();
+  if (aboveAge) query.age = { $gte: parseInt(aboveAge) };
+  if (city && city !== "all") query.city = city;
+  const students = await Students.find(query).populate("courses", "title");
+  const studentsCount = await Students.find(query).countDocuments();
 
-router.get("/myInfo", authenticateUser, async (req, res) => {
-  try {
-    const { city, country } = req.body;
-    const user = await User.findOne(
-      {
-        _id: req.user._id,
-      });
-      if(user) return sendResponse(res, 200, user, false, "User updated Successfully");
-    
-    sendResponse(res, 400, null, true, "User nothing");
-  } catch (err) {
-    
-    sendResponse(res, 500, null, true, "Something went wrong");
-  }
+  const studentsByCourse = await Students.aggregate([
+    {
+      $match: query,
+    },
+    {
+      $group: { _id: "$course", totalQuantity: { $sum: 1 } },
+    },
+    {
+      $lookup: {
+        from: "courses",
+        localField: "_id",
+        foreignField: "_id",
+        as: "course",
+      },
+    },
+    {
+      $unwind: "$course",
+    },
+  ]);
+  sendResponse(
+    res,
+    200,
+    { count: studentsCount, students, studentsByCourse },
+    false,
+    "Students Fetched Successfully"
+  );
 });
 
 export default router;

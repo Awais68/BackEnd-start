@@ -35,6 +35,6 @@ app.use("/task", authenticateUser, taskRoutes);
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/course", courseRoutes);
-app.use("/student", studentsRoutes);
+app.use("/students", studentsRoutes);
 
 app.listen(PORT, () => console.log("server is running on PORT " + PORT));
