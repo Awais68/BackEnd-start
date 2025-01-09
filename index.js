@@ -8,6 +8,8 @@ import userRoutes from "./routers/users.js";
 import studentsRoutes from "./routers/students.js";
 import courseRoutes from "./routers/course.js";
 import { authenticateUser } from "./middleware/authentication.js";
+
+
 import cors from "cors";
 
 const app = express();
